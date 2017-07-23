@@ -82,7 +82,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(DEP_DIR)/%.d
 $(OUTPUT_SO): obj/Sha1.o
 	$(HOST_COMPILER) -shared $(CCFLAGS) -o $@ $+ -pthread
 
-$(OUTPUT_TEST_BINARY): $(OUTPUT_SO) obj/main.o obj/Sha1Test.o obj/Sha1TestData.o
+$(OUTPUT_TEST_BINARY): $(OUTPUT_SO) obj/test_main.o obj/Sha1Test.o obj/Sha1TestData.o
 	$(HOST_COMPILER) $(CCFLAGS) -o $@ $+ $(LIBRARIES) -pthread -Lbin -lsha1
 
 
