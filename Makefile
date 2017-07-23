@@ -6,7 +6,8 @@ dbg:=1
 OBJ_DIR:=./obj
 SRC_DIR:=./src
 OUTPUT_DIR:=./bin
-OUTPUT_BINARY:=$(OUTPUT_DIR)/main.bin
+OUTPUT_TEST_BINARY:=$(OUTPUT_DIR)/test.bin
+OUTPUT_SO:=$(OUTPUT_DIR)/libsha1.so
 
 HOST_COMPILER:=g++
 
@@ -61,18 +62,10 @@ mkdirs_routine = @mkdir -p $(DEP_DIR) && \
 
 all: build
 
-.PHONY: info
-info:
-	@echo ALL_CCFLAGS=$(ALL_CCFLAGS)
-	@echo CPP_FILES=$(CPP_FILES)
-	@echo OBJ_FILES=$(OBJ_FILES)
-
 .PHONY: build
-build: mkdirs $(OUTPUT_BINARY)
+build: mkdirs $(OUTPUT_SO)
 	@echo "build finished..."
 #	@spd-say "build finished"
-
-
 
 
 # For the header dependency trick.
@@ -81,34 +74,40 @@ DEPFLAGS = -MT $@ -MMD -MP -MF $(DEP_DIR)/$*.Td
 $(DEP_DIR)/%.d: ;
 .PRECIOUS: $(DEP_DIR)/%.d
 
-
-
+# TODO fPIC is only required for Sha1.cpp.
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(DEP_DIR)/%.d
-	$(HOST_COMPILER) $(DEPFLAGS) $(INCLUDES) $(CCFLAGS) -o $@ -c $< -pthread && mv -f $(DEP_DIR)/$*.Td $(DEP_DIR)/$*.d
-
-$(OUTPUT_BINARY): $(OBJ_FILES)
-	$(HOST_COMPILER) $(CCFLAGS) -o $@ $+ $(LIBRARIES) -pthread
+	$(HOST_COMPILER) -fPIC $(DEPFLAGS) $(INCLUDES) $(CCFLAGS) -o $@ -c $< -pthread && mv -f $(DEP_DIR)/$*.Td $(DEP_DIR)/$*.d
 
 
+$(OUTPUT_SO): obj/Sha1.o
+	$(HOST_COMPILER) -shared $(CCFLAGS) -o $@ $+ -pthread
+
+$(OUTPUT_TEST_BINARY): $(OUTPUT_SO) obj/main.o obj/Sha1Test.o obj/Sha1TestData.o
+	$(HOST_COMPILER) $(CCFLAGS) -o $@ $+ $(LIBRARIES) -pthread -Lbin -lsha1
+
+
+
+.PHONY: build_test
+build_test: build $(OUTPUT_TEST_BINARY)
 
 .PHONY: test
-test: build
-	$(OUTPUT_BINARY)
+test: build_test
+	LD_LIBRARY_PATH=$(OUTPUT_DIR) $(OUTPUT_TEST_BINARY)
 
 # Measure running time.
 .PHONY: time
 time: build
-	time $(OUTPUT_BINARY)
+	LD_LIBRARY_PATH=$(OUTPUT_DIR) time $(OUTPUT_TEST_BINARY)
 
 # Start in gdb.
 .PHONY: gdb
 gdb: build
-	gdb -ex=r $(OUTPUT_BINARY)
+	LD_LIBRARY_PATH=$(OUTPUT_DIR) gdb -ex=r $(OUTPUT_TEST_BINARY)
 
 # Start in valgrind.
 .PHONY: valg
 valg: build
-	valgrind --leak-check=full --show-leak-kinds=all -v $(OUTPUT_BINARY)
+	LD_LIBRARY_PATH=$(OUTPUT_DIR) valgrind --leak-check=full --show-leak-kinds=all -v $(OUTPUT_TEST_BINARY)
 
 .PHONY: clean
 clean: 
@@ -124,6 +123,13 @@ cleandeps: clean
 .PHONY: mkdirs
 mkdirs:
 	$(call mkdirs_routine)
+
+.PHONY: info
+info:
+	@echo ALL_CCFLAGS=$(ALL_CCFLAGS)
+	@echo CPP_FILES=$(CPP_FILES)
+	@echo OBJ_FILES=$(OBJ_FILES)
+
 
 # For the header dependency trick.
 include $(shell find $(DEP_DIR)/ -type f -name '*.d')
