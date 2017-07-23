@@ -1,0 +1,7 @@
+/lib
+/lib/*
+/bin/*
+/dep/*
+/obj/*
+/output/*
+/data/*
