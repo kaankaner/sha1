@@ -91,8 +91,8 @@ $(OUTPUT_BINARY): $(OBJ_FILES)
 
 
 
-.PHONY: run
-run: build
+.PHONY: test
+test: build
 	$(OUTPUT_BINARY)
 
 # Measure running time.
