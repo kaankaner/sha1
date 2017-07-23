@@ -1,4 +1,5 @@
-sha1 - an implementation of the SHA-1 algorithm written in cpp.
+sha1 - an implementation of the SHA-1 algorithm written in cpp. 
+Can handle bit strings with non divisible by 8 length.
 
 # COMPILATION
 
@@ -22,3 +23,6 @@ make
 
 make test
 
+# TODO
+
+Add tests for input bit strings with non divisible by 8 length.
