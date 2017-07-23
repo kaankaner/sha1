@@ -64,6 +64,8 @@ inline static uint32_t makeUint32(const unsigned char *src)
 
 
 
+namespace sha1 {
+
 Sha1::Sha1()
 { 
     reset();
@@ -254,7 +256,4 @@ void Sha1::processBlockInternal(const unsigned char *M, uint32_t *H)
     H[4] += E; 
 }
 
-
-
-
-
+} // end namespace sha1

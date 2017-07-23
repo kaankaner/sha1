@@ -1,6 +1,8 @@
 #include <vector>
 #include <string>
-// Generated with gentest/gentest.py.
+// Generated with the help of gentest/gentest.py.
+
+namespace sha1 {
 
 static const auto& strpair = std::make_pair<std::string, std::string>;
 typedef std::pair<std::string, std::string> StringPair;
@@ -245,3 +247,5 @@ strpair("dc0cb13dbfa45f7f5c1974b7f8f360c4ac3b9187", "aB9crhTDZrOIYZGeEBHz0Y75Aca
 strpair("e376ceb307ae4bd62916a58e24022013edb9262a", "MAD9nGIUtmoO1eUUClbNYqWUV7YaiCpet0x1wrAdWYH2LGVwFyPhS8c9NMbAxIAIJyQXwMAbm91T4kNaAKuqe4ZwiI6ex7LMmaaVOWmkSukUsFbeWD02Cwd"),
 strpair("cc482fd298c356b1e631304412ead98886c5cf0b", "O8Xir6HJqOyBaQ5Dsun2OL8Luef0lJzI4kNgHneSbFNgtQnLap7pgdUzagF1sElw9lsAmoOzjq0svx7XK8LLsouXjfHrpD3lVTPzbUCg795pkjtZRhkDzWA"),
 };
+
+} //  end namespace sha1

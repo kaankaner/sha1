@@ -10,7 +10,7 @@
  */
 
 
-
+namespace sha1 {
 
 class Sha1
 {
@@ -95,6 +95,8 @@ private:
     Sha1 operator=(const Sha1&) { return *this; }
 
 };
+
+} // end namespace sha1
 
 
 #endif // include guard

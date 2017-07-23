@@ -107,7 +107,7 @@ TEST(sha1, test1)
         const std::string& input = testInputs[i];
         const std::string& expected = testExpecteds[i];
         char result[20];
-        Sha1 sha1;
+        sha1::Sha1 sha1;
         sha1.processStrFull(input.c_str(), input.length(), 0, result);
         std::string result_str = convertToTestFormat(result);
         EXPECT_STREQ( expected.c_str(), result_str.c_str() );
@@ -208,18 +208,20 @@ TEST(sha1, processBlockInternal)
 
         std::vector<uint32_t> H(5);
         memcpy( &H[0], testCase.Hin, sizeof(uint32_t) * H.size() );
-        Sha1::processBlockInternal((const unsigned char*)&block[0], &H[0]);
+        sha1::Sha1::processBlockInternal((const unsigned char*)&block[0], &H[0]);
 
         EXPECT_TRUE(0 == memcmp(testCase.Hout, &H[0], sizeof(uint32_t)*H.size() ) );
     }
 }
 
+namespace sha1 {
+    extern const std::vector<std::pair<std::string, std::string>> testCases;
+}
 
 TEST(sha1, fulltests)
 {
-    extern const std::vector<std::pair<std::string, std::string>> testCases;
-    for(const std::pair<std::string, std::string> testCase: testCases) {
-        Sha1 sha1;
+    for(const std::pair<std::string, std::string> testCase: sha1::testCases) {
+        sha1::Sha1 sha1;
         std::vector<char> result(20);
         sha1.processStrFull(testCase.second.c_str(), testCase.second.length(), 0, &result[0]);
         std::stringstream resulthex;
